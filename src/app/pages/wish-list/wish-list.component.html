@@ -1,0 +1,30 @@
+<h1 class="text-center font-semibold text-3xl mb-10 md:mt-36 md:font-bold mt-28 dark:text-white">Wish list</h1>
+
+<p *ngIf="userWishList.length===0" class="text-center text-gray-400 font-medium my-20">Wish list is empty</p>
+
+
+<div *ngIf="userWishList.length" class="flex flex-col w-[95%] m-auto x:w-[70%] md:w-full md:grid md:grid-cols-2 lg:w-[80%]">
+
+
+    @for (wishlist of userWishList; track wishlist) {
+
+    <div class="flex justify-evenly mt-2 items-center md:items-center md:bg-gray-300 dark:bg-gray-950 md:rounded-xl py-2 px-4 md:py-4 md:mx-4">
+        
+        <img *ngIf="!wishlist.product.isDeleted" [routerLink]="['/alexpress/product',wishlist.productId]" [src]="wishlist.product.image"  class="object-cover w-28 h-28 x:w-36 rounded-lg x:h-36 md:w-36 md:h-36 lg:w-36 lg:h-36 transition ease-in-out duration-300 hover:shadow-md cursor-pointer" alt="">
+        <img *ngIf="wishlist.product.isDeleted" [src]="wishlist.product.image"  class="object-cover w-28 h-28 x:w-36 rounded-lg x:h-36 md:w-36 md:h-36 lg:w-36 lg:h-36 grayscale" alt="">
+        
+        <div class="flex flex-col justify-center items-center">
+            <p *ngIf="!wishlist.product.isDeleted" class="text-sm font-medium w-40 line-clamp-2 mx-2 md:w-44 md:line-clamp-3 break-words dark:text-white">{{wishlist.product.title}}</p>
+            <p *ngIf="wishlist.product.isDeleted" class="font-medium mb-4 w-48 text-center text-xl dark:text-white">Product not available now</p>
+            <button *ngIf="!wishlist.product.isDeleted" (click)="addToCart(wishlist.productId)" class="py-1 px-1.5 mt-2 text-sm font-medium w-40 border-2 rounded-lg border-black dark:border-gray-950 mb-1 hover:bg-cyan-300 transition ease-in-out duration-300 dark:text-white dark:hover:text-black
+            ">Add to cart</button>
+            <button (click)="removeFromWishlist(wishlist.id)" class="py-1 text-sm font-medium px-1.5 w-40 border-2 rounded-lg border-black bg-red-300 hover:text-white hover:bg-red-600 transition ease-in-out duration-300">Remove from wishlist</button>
+
+        </div>
+    </div>
+
+    }
+
+</div>
+
+<app-products></app-products>

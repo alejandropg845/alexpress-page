@@ -1,0 +1,11 @@
+<div *ngIf="safetyService.isAnalysingSubject | async" class="fixed inset-0 shadow-2xl z-[999] bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white dark:bg-black p-6 rounded-lg shadow-lg text-center mx-5">
+        <div class="mb-4">
+            <i class="fas fa-spinner fa-spin text-4xl text-cyan-500"></i>
+        </div>
+        <div class="flex items-center justify-center space-x-2">
+            <i class="fas fa-shield-alt text-cyan-500"></i>
+            <p class="text-lg font-semibold dark:text-white">Analysing content, please wait...</p>
+        </div>
+    </div>
+</div>

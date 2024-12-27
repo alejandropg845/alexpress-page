@@ -1,0 +1,130 @@
+<h1 class="text-3xl mt-28 text-center my-4 md:mt-36 lg:mt-40 dark:text-white">Orders history</h1>
+<p *ngIf="orders.length===0" class="text-gray-500 text-center mt-10">You haven't done an order yet</p>
+@for (order of orders; track order) {
+<div class="flex
+          bg-gray-100
+          dark:bg-gray-950
+            p-2
+            rounded-md
+            mb-5 
+            border
+          border-black
+            w-[95%]
+            flex-col
+            mx-auto
+            items-center
+            justify-center
+            x:w-[80%]
+            md:w-[70%]
+            md:gap-4
+            md:items-center
+            md:justify-between
+            lg:w-[80%]
+            lg:flex-row
+            lg:justify-evenly">
+    <div>
+        <div>
+            <h2 class="mb-1 dark:text-white">Created on: <span class="bg-cyan-300 px-1 rounded-md font-medium dark:text-black">{{order.createdOn | date}}</span></h2>
+            <h2 class="dark:text-white">Paypal transaction ID: <span class="font-bold">{{order.paypalTransactionId}}</span></h2>
+        </div>
+        <p class="font-semibold mb-4 text-xl md:text-xl dark:text-white">Ordered products</p>
+        <div class="flex gap-2 x:gap-4 items-center justify-evenly flex-wrap bg-gray-300 dark:bg-black p-3 rounded-md">
+            @for (ordered of order.orderedProducts; track $index) {
+            <div>
+                <div [ngClass]="{'bg-gradient-to-r from-cyan-300 via-cyan-500 to-cyan-700':ordered.couponName}" class="relative">
+                    
+                    <img *ngIf="!ordered.isDeleted" [routerLink]="['/alexpress/product', ordered.productId]" class="w-32 cursor-pointer p-1 border-2 border-transparent h-32 x:w-28 x:h-28 md:w-32 md:h-32 object-cover" [src]="ordered.imageUrl" alt="product">
+                    <img *ngIf="ordered.isDeleted" class="w-32 p-1 border-2 border-transparent h-32 x:w-28 x:h-28 md:w-32 md:h-32 object-cover grayscale" [src]="ordered.imageUrl" alt="product">
+                    <p [ngClass]="{'bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600':ordered.couponName}" class="absolute px-2 border-black border-2 bg-cyan-300 font-bold rounded-full -top-2 -right-2">{{ordered.quantity}}</p>
+                    <p *ngIf="ordered.couponName" class="px-2 bottom-1 left-1 absolute text-center text-xs bg-gradient-to-r from-cyan-300 via-cyan-400 to-cyan-500 font-bold">{{ordered.couponName}}</p>
+                </div>
+                
+                <div class="flex flex-col">
+                    <p *ngIf="ordered.isDeleted" class="dark:text-cyan-300 font-bold text-xs break-normal w-32">This product is not availabe now</p>
+                    <small class="flex dark:text-white items-center justify-start">USD<p class="text-xl font-bold px-0.5">{{ordered.price}}</p>$</small>
+                    <!-- <small *ngIf="ordered.couponName==='50OffOneProduct'" class="flex">One product is {{getDiscount(ordered.price,ordered.couponName,ordered.discountValue)}}</small> -->
+                </div>
+
+                <div class="flex">
+                    <small [ngClass]="{'line-through decoration-2': ordered.couponName==='FreeShipping'}" class="dark:text-white flex items-center justify-start">Shipping<p class="text-sm font-bold px-0.5">{{ordered.shippingPrice}}</p></small>
+                    <p *ngIf="ordered.couponName==='FreeShipping'" class="text-base font-bold px-0.5 dark:text-white">0$</p>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    <div>
+        <div class="bg-gray-300 dark:bg-black mt-3 rounded-lg px-2 pb-1">
+            <h2 class="pt-1 font-semibold text-xl md:text-2xl dark:text-white">Shipping information</h2>
+            <div class="grid grid-cols-2 gap-2">
+                <div class="flex-1">
+                    <p class="text-xs font-bold md:text-lg md:font-medium dark:text-cyan-300">Full name</p>
+                    <p class=" text-xs font- line-clamp-1 md:text-base dark:text-white">{{order.address.fullName}}</p>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs font-bold md:text-lg md:font-medium dark:text-cyan-300">Phone</p>
+                    <p class=" text-xs md:text-base dark:text-white">{{order.address.phone}}</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div class="flex-1">
+                    <p class="text-xs font-bold md:text-lg md:font-medium dark:text-cyan-300">Postal code</p>
+                    <p class=" text-xs line-clamp-1 md:text-base dark:text-white">{{order.address.postalCode}}</p>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs font-bold md:text-lg md:font-medium dark:text-cyan-300">City</p>
+                    <p class=" text-xs md:text-base dark:text-white">{{order.address.city}}</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div class="flex-1">
+                    <p class="text-xs font-bold md:text-lg md:font-medium dark:text-cyan-300">Residence</p>
+                    <p class=" text-xs line-clamp-1 md:text-base dark:text-white">{{order.address.residence}}</p>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs font-bold md:text-lg md:font-medium dark:text-cyan-300">Country</p>
+                    <p class=" text-xs md:text-base dark:text-white">{{order.address.country}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-evenly items-center w-full gap-3 mt-3">
+            <p class="border-b-4 border-cyan-300 dark:text-white text-base x:text-lg">Summary: <span class="font-medium md:text-3xl dark:text-white">USD ${{order.summary}}</span></p>
+            <button *ngIf="!alreadyVoted(order)" type="button" (click)="OnRateOrder()" class="px-2 text-sm x:text-base font-bold text-black bg-gradient-to-r from-cyan-300 to-cyan-500 rounded-lg border-2 border-transparent hover:border-white transition ease-in-out duration-300">Rate and review this order</button>
+            <p *ngIf="alreadyVoted(order)" class="px-2 font-bold text-sm x:text-base text-black bg-gradient-to-r border-green-300 from-green-400 to-green-600 rounded-lg border-2">Already rated<i class="fa-solid fa-check ml-2"></i></p>
+        </div>
+    </div>
+
+    <div *ngIf="isVisible" class="fixed inset-0 bg-black opacity-30 z-[999]"></div> <!--Opacity-->
+    <div *ngIf="isVisible" class="fixed flex justify-center items-center inset-0 z-[999]"> <!--Container-->
+        <div class="bg-white w-[300px] z-50 p-4 rounded-lg"><!--Content container-->
+            <div class="flex flex-col justify-center items-center">
+                <div>
+                    <p class="font-medium text-center">Rate your order</p>
+                    <div>
+                        <button (click)="rateProduct(1)" (mouseover)="mouseHover(1)" (mouseout)="mouseHover(0)"><i [ngClass]="{'text-yellow-400':rating>=1 || hoverRating>=1}" class="text-2xl fa-solid fa-star transition ease-in-out duration-200"></i></button>
+                        <button (click)="rateProduct(2)" (mouseover)="mouseHover(2)" (mouseout)="mouseHover(0)"><i [ngClass]="{'text-yellow-400':rating>=2 || hoverRating>=2}" class="text-2xl fa-solid fa-star transition ease-in-out duration-200"></i></button>
+                        <button (click)="rateProduct(3)" (mouseover)="mouseHover(3)" (mouseout)="mouseHover(0)"><i [ngClass]="{'text-yellow-400':rating>=3 || hoverRating>=3}" class="text-2xl fa-solid fa-star transition ease-in-out duration-200"></i></button>
+                        <button (click)="rateProduct(4)" (mouseover)="mouseHover(4)" (mouseout)="mouseHover(0)"><i [ngClass]="{'text-yellow-400':rating>=4 || hoverRating>=4}" class="text-2xl fa-solid fa-star transition ease-in-out duration-200"></i></button>
+                        <button (click)="rateProduct(5)" (mouseover)="mouseHover(5)" (mouseout)="mouseHover(0)"><i [ngClass]="{'text-yellow-400':rating>=5 || hoverRating>=5}" class="text-2xl fa-solid fa-star transition ease-in-out duration-200"></i></button>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    <p class="font-medium">Leave a comment</p>
+                    <textarea (input)="setTextAreaLength(textarea, limitCounter)" #textarea class="border-2 border-black px-2 py-1 resize-none rounded-lg w-[260px] h-[100px]"></textarea>
+                    <p class="font-bold"><span #limitCounter>{{textareaLength}}</span> / 150</p>
+                </div>
+                <div class="flex justify-evenly gap-2">
+                    <button type="button" (click)="OnCancelRate()" class="px-6 mt-5 py-1 font-medium rounded-lg hover:border-black border-2 border-transparent transition ease-in-out duration-300">Cancel</button>
+                    <button type="button" (click)="onSubmit(textarea, order.id)" class="px-6 mt-5 py-1 font-medium rounded-lg bg-cyan-300 border-2 border-transparent hover:border-black transition ease-in-out duration-300">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+}
+
+
+
+
+

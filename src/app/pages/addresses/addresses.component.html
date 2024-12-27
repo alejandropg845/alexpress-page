@@ -1,0 +1,102 @@
+<h1 class="text-center font-semibold text-3xl mt-32 lg:mt-44 mb-10 dark:text-white">Your addresses</h1>
+
+<p *ngIf="addresses.length===0 && !isVisible" class="text-center text-gray-400 font-medium my-20 dark:text-white">You haven't added any address yet. <button (click)="isVisible = true; isEdit = false" class="text-black font-medium underline dark:text-white">Add one</button></p>
+<p *ngIf="addresses.length!==0" (click)="isVisible = true; isEdit = false; this.addressForm.reset()" class="cursor-pointer text-center text-black underline font-medium mt-5 dark:text-white">Add another address</p>
+
+<div class="flex flex-col w-[90%] x:w-[70%] md:w-[80%] justify-evenly mx-auto lg:w-[50%] md:grid md:grid-cols-2 md:gap-4">
+
+    @for (address of addresses; track address) {
+    <div class="bg-gray-300 mt-3 w-[80%] lg:w-full mx-auto rounded-lg px-2 pb-1 dark:bg-gray-950">
+        <h2 class="pt-1 font-semibold text-xl dark:text-white mb-2">Shipping information</h2>
+        <div class="grid grid-cols-2 gap-2">
+            <div class="flex-1">
+                <p class="text-xs font-bold dark:text-cyan-300">Full name</p>
+                <p class=" text-xs font- line-clamp-1 md:text-sm dark:text-white">{{address.fullName}}</p>
+            </div>
+            <div class="flex-1">
+                <p class="text-xs font-bold dark:text-cyan-300">Phone</p>
+                <p class=" text-xs md:text-sm dark:text-white">{{address.phone}}</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+            <div class="flex-1">
+                <p class="text-xs font-bold dark:text-cyan-300">Postal code</p>
+                <p class=" text-xs line-clamp-1 md:text-sm dark:text-white">{{address.postalCode}}</p>
+            </div>
+            <div class="flex-1">
+                <p class="text-xs font-bold dark:text-cyan-300">City</p>
+                <p class=" text-xs md:text-sm dark:text-white">{{address.city}}</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+            <div class="flex-1">
+                <p class="text-xs font-bold dark:text-cyan-300">Residence</p>
+                <p class=" text-xs line-clamp-1 md:text-sm dark:text-white">{{address.residence}}</p>
+            </div>
+            <div class="flex-1">
+                <p class="text-xs font-bold dark:text-cyan-300">Country</p>
+                <p class=" text-xs md:text-sm dark:text-white">{{address.country}}</p>
+            </div>
+        </div>
+        <div class="w-full flex justify-end mt-2">
+            <button (click)="onEditclick(address.id)" type="button" class="dark:text-white px-2 border font-bold border-white dark:border-cyan-300 rounded-lg"><i class="fa-solid fa-pen-to-square mr-1 text-sm"></i>Edit</button>
+        </div>
+    </div>
+    }
+    
+    <div *ngIf="isVisible" class="fixed inset-0 flex justify-center items-center z-50">
+        
+        <div class="fixed inset-0 bg-black opacity-50" (click)="cancel()"></div>
+
+        <div class="bg-white dark:bg-gray-950 w-[400px] z-10 p-4 rounded-lg">
+            
+            <form [formGroup]="addressForm" (submit)="onSubmit()">
+                <h2 *ngIf="!isEdit" class="font-semibold text-2xl text-center dark:text-white">Add an address</h2>
+                <h2 *ngIf="isEdit" class="font-semibold text-2xl text-center dark:text-white">Edit address</h2>
+                <div class="flex flex-col w-full">
+                    <label class="text-xs md:text-sm font-bold dark:text-white" for="fullName">Your full name</label>
+                    <input formControlName="fullName" maxlength="40" [ngClass]="validateField('fullName')" autocomplete="off" class="px-2 py-0.5 bg-gray-200 rounded-lg text-sm border border-black" id="fullName" type="text" placeholder="Full name">
+                </div>
+            
+            
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="flex flex-col flex-1">
+                        <label class="mt-3 text-xs md:text-sm font-bold dark:text-white" for="postalCode dark:text-white">Postal code</label>
+                        <input formControlName="postalCode" maxlength="10" [ngClass]="validateField('postalCode')" autocomplete="off" class="px-2 py-0.5 bg-gray-200 rounded-lg text-sm border border-black" id="postalCode" type="text" placeholder="Postal code">
+                    </div>
+                    <div class="flex flex-col flex-1">
+                        <label class="mt-3 text-xs md:text-sm font-bold dark:text-white" for="phone">Phone</label>
+                        <div class="relative">
+                            <input formControlName="phone" maxlength="10" [ngClass]="validateField('phone')" autocomplete="off" class="px-2 py-0.5 bg-gray-200 rounded-lg text-sm border border-black [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" id="phone" type="text" maxlength="10"  placeholder="Phone number">
+                            <p *ngIf="this.addressForm.get('phone')?.touched  && !this.addressForm.get('phone')?.valid" class="text-red-500 absolute -bottom-5 left-0 dark:text-red-500 font-semibold text-xs">Phone must have 10 numbers*</p>
+                        </div>
+                    </div>
+            
+                </div>
+            
+                <div class="flex flex-col w-full">
+                    <label class="mt-3 text-xs md:text-sm font-bold dark:text-white" for="residence">Residence</label>
+                    <input formControlName="residence" maxlength="60" [ngClass]="validateField('residence')" autocomplete="off" class="px-2 py-0.5 bg-gray-200 rounded-lg text-sm border border-black" id="residence" type="text" placeholder="Residence">
+                </div>
+            
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="flex flex-col flex-1">
+                        <label class="mt-3 text-xs md:text-sm font-bold dark:text-white" for="country">Country</label>
+                        <input formControlName="country" maxlength="15" [ngClass]="validateField('country')" autocomplete="off" class="px-2 py-0.5 bg-gray-200 rounded-lg text-sm border border-black" id="country" type="text" placeholder="Country">
+                    </div>
+                    <div class="flex flex-col flex-1">
+                        <label class="mt-3 text-xs md:text-sm font-bold dark:text-white" for="city">City</label>
+                        <input formControlName="city" [ngClass]="validateField('city')" autocomplete="off" class="px-2 py-0.5 bg-gray-200 rounded-lg text-sm border border-black" id="city" maxlength="25" type="text" placeholder="City">
+                    </div>
+                </div>
+                <div class="flex justify-evenly mt-2 w-full">
+                    <button [ngClass]="{'pointer-events-none':isLoading}" type="button" (click)="cancel()" class="px-4 py-0.5 border-2 border-gray-200 rounded-lg font-semibold dark:text-white">Cancel</button>
+                    <button [ngClass]="{'pointer-events-none':isLoading}" type="submit" class="px-4 py-0.5 bg-cyan-300 rounded-lg font-semibold">Done <i *ngIf="isLoading" class="fa fa-spinner animate-spin"></i></button>
+                </div>
+            
+            </form>
+        </div>
+        
+    </div>
+
+</div>

@@ -1,0 +1,75 @@
+
+<h2 [ngClass]="(
+    (locationStrategy.path().includes('alexpress/home')
+    || locationStrategy.path().includes('alexpress/product/')
+    || locationStrategy.path().includes('alexpress/wish_list')
+
+)?'mt-10':'mt-40')" *ngIf="!locationStrategy.path().includes('/alexpress/less')" class="text-center text-3xl font-bold dark:text-white">{{title}}</h2>
+
+<div *ngIf="!locationStrategy.path().includes('/alexpress/less')" class="flex w-full justify-center x:justify-start items-center mb-8 mt-4">
+    <p class="font-bold x:text-base md:text-xl x:ml-10 dark:text-white">Order:</p>
+    <div class="flex px-2">
+        <p (click)="orderBy('none')" class="text-sm x:text-base md:text-base px-1 x:px-3 font-medium border-2 transition ease-in-out duration-300 hover:bg-gray-300 cursor-pointer border-black dark:border-white border-r-0 rounded-l-lg dark:text-white dark:hover:text-black">No order</p>
+        <div class="relative">
+            <p (click)="orderBy('price')" class="text-sm x:text-base md:text-base pr-4 pl-1 x:pr-5 font-medium border-2 transition ease-in-out duration-300 hover:bg-cyan-300 cursor-pointer border-black dark:border-white border-r-0 dark:text-white dark:hover:text-black">Price</p>
+            <i [class]="(sortingPrice)?'font-bold':'text-red-500'" class="fa-solid fa-caret-up absolute top-0 right-1 x:top-1 text-xs"></i>
+            <i [class]="(sortingPrice)?'text-red-500':'font-bold'" class="fa-solid fa-caret-down absolute top-2 right-1 x:top-3 text-xs"></i>
+        </div>
+        <div class="relative">
+            <p (click)="orderBy('rating')" class="text-sm x:text-base md:text-base pr-4 pl-1 font-medium border-2 transition ease-in-out duration-300 hover:bg-cyan-300 cursor-pointer border-black dark:border-white border-r-0 dark:text-white dark:hover:text-black">Rating</p>
+            <i [class]="(sortingRating)?'font-bold':'text-red-500'" class="fa-solid fa-caret-up absolute top-0 x:top-1 right-1 text-xs"></i>
+            <i [class]="(sortingRating)?'text-red-500':'font-bold'" class="fa-solid fa-caret-down absolute top-2 x:top-3 right-1 text-xs"></i>
+        </div>
+        <div class="relative">
+            <p (click)="orderBy('orders')" class="text-sm x:text-base md:text-base pr-4 pl-1 font-medium border-2 transition ease-in-out duration-300 hover:bg-cyan-300 cursor-pointer border-black dark:border-white rounded-r-lg dark:text-white dark:hover:text-black">Orders</p>
+            <i [class]="(sortingOrders)?'font-bold':'text-red-500'" class="fa-solid fa-caret-up absolute top-0 x:top-1 right-1 text-xs"></i>
+            <i [class]="(sortingOrders)?'text-red-500':'font-bold'" class="fa-solid fa-caret-down absolute top-2 x:top-3 right-1 text-xs"></i>
+        </div>
+    </div>
+</div>
+
+<div class="w-[95%] mx-auto grid grid-cols-2 content-center justify-items-center gap-2 md:grid-cols-3 lg:grid-cols-4">
+    @for (product of products; track product; let i = $index) {
+    <div class="flex flex-col items-center mt-5 bg-gray-100 dark:bg-gray-950 css-layout rounded-lg">
+        <div class="w-full relative">
+            <a class="container" [routerLink]="['/alexpress/product', product.id]" >
+                <img class="w-full h-36 object-cover rounded-tl-lg rounded-tr-lg" [src]="product.images[0]" alt="image">
+            </a>
+            <div class="absolute bottom-1 left-1 bg-gray-200 px-1 rounded-lg">
+                <i [ngClass]="{'text-yellow-400':calculateStarRating(product)>=1}" class="fa-solid fa-star"></i>
+                <i [ngClass]="{'text-yellow-400':calculateStarRating(product)>=2}" class="fa-solid fa-star"></i>
+                <i [ngClass]="{'text-yellow-400':calculateStarRating(product)>=3}" class="fa-solid fa-star"></i>
+                <i [ngClass]="{'text-yellow-400':calculateStarRating(product)>=4}" class="fa-solid fa-star"></i>
+                <i [ngClass]="{'text-yellow-400':calculateStarRating(product)>=5}" class="fa-solid fa-star"></i>
+            </div>
+            <p class="absolute left-0 top-1 mx-1 px-2 
+            border-cyan-400 border-[1px]
+            bg-gradient-to-r
+            from-cyan-300 to-cyan-500 
+            text-black dark:text-black 
+            font-bold rounded-md w-max 
+            text-sm" *ngIf="userCredentials && userCredentials.username === product.username">
+                Your product
+            </p>
+        </div>
+
+        <div class="p-1">
+            <p class="dark:text-white text-sm line-clamp-2 font-bold min-h-10 max-w-[226px] break-words">{{product.title}}</p>
+            <div>
+                <p class="dark:text-white text-xs">USD<span class="text-3xl ml-1 font-bold x:text-4xl">{{product.price}}</span></p>
+                <p class="hidden dark:text-white text-sm x:block font-bold">Shipping: <span *ngIf="product.shippingPrice" class="text-red-400">USD ${{product.shippingPrice}}</span><span *ngIf="!product.shippingPrice" class="text-red-400">Free</span></p>
+            </div>
+            <div class="flex items-center justify-evenly gap-2">
+                <p class="hidden text-sm my-2 rounded-lg x:block bg-cyan-300 px-1 font-bold">{{product.condition}}</p>
+                <p class="hidden text-sm my-2 rounded-lg x:block bg-gray-300 px-1 font-bold">{{product.quantity}} available</p>
+            </div>
+        </div>
+        
+        <div class="container flex items-center justify-evenly my-2">
+            <button (click)="addToCart(product.id)"><i class="fa-solid fa-cart-plus dark:text-white text-lg border-2 border-cyan-300 px-3 rounded-lg hover:bg-cyan-300 hover:text-black dark:hover:text-black dark:hover:bg-cyan-300 transition ease-in-out duration-150"></i></button>
+            <button (click)="addToWishList(product.id)"><i class="fa-regular fa-heart dark:text-white text-lg border-2 border-cyan-300 px-3 rounded-lg hover:bg-cyan-300 hover:text-black dark:hover:text-black dark:hover:bg-cyan-300 transition ease-in-out duration-150"></i></button>
+        </div>
+    </div>
+    }
+</div>
+

@@ -1,0 +1,9 @@
+<div *ngIf="confirmService.isOpenSubject | async" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h2 class="text-xl font-bold mb-4 dark:text-white">Confirm Action</h2>
+      <div class="flex justify-end space-x-4">
+        <button (click)="confirmService.cancel()" class="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 dark:bg-gray-700 dark:hover:bg-gray-800">Cancel</button>
+        <button (click)="confirmService.isConfirmed()" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800">Accept</button>
+      </div>
+    </div>
+  </div>

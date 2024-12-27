@@ -1,0 +1,75 @@
+<h1 *ngIf="!paymentDone" class="mt-32 font-bold text-3xl text-center dark:text-white md:mt-40 md:mb-10">Order checkout</h1>
+
+<div *ngIf="!paymentDone" class="p-2 md:grid md:grid-cols-2 md:gap-2">
+
+    <div class="bg-gray-100 dark:bg-gray-950 mx-auto w-full max-w-[528px] rounded-lg px-1 mb-5 md:flex-1">
+        <p class="font-medium border-b-2 border-cyan-300 mb-2 dark:text-white p-2">Your order summary</p>
+
+        @for (cart of userCart; track cart) {
+        <div class="bg-white dark:bg-black container flex items-center mx-auto rounded-lg p-2 gap-2 mb-2"> <!--Product container-->
+            
+            <img class="min-w-28 h-28 object-cover rounded-lg" [src]="cart.product.image" alt="product image">
+            
+            <div class="container"> <!--Product info-->
+                <p class="text-sm line-clamp-2 font-semibold dark:text-white w-full" style="overflow-wrap: break-word; word-break: break-word;">{{cart.product.title}}</p>
+                <p *ngIf="cart.discountName" class="text-sm bg-cyan-300 text-black px-2 border-2 border-black rounded-lg w-max font-bold">{{cart.discountName}}</p>
+                <p class="font-medium dark:text-white">USD <span class="font-bold text-xl">{{cart.product.price}}</span>$</p>
+                <p class="text-xs font-medium dark:text-white">Shipping <span class="font-bold text-lg">{{cart.product.shippingPrice}}</span>$</p>
+                <div class="flex bg-gray-300 w-max rounded-lg">
+                    <span><i [ngClass]="{'select-none cursor-auto text-gray-400':cart.quantity===1}" (click)="productQuantity(cart.productId!,-1)" class="fa-solid px-1 cursor-pointer rounded-full fa-minus select-none"></i></span>
+                    <p class="font-bold px-2 select-none">{{cart.quantity}}</p>
+                    <span><i (click)="productQuantity(cart.productId!, 1)" class="px-1 rounded-full fa-solid fa-plus select-none cursor-pointer"></i></span>
+                </div>
+            </div>
+        </div>
+        }
+
+        <div> <!-- Summary-->
+            <div class="flex justify-between items-center p-2">
+                <p class="text-lg font-semibold dark:text-white x:text-xl md:text-2xl">Total:</p>
+                <p class="text-lg font-bold dark:text-white x:text-xl md:text-2xl"><span>{{summary | number}}$</span></p>
+            </div>
+        </div>
+    </div>
+
+    <form [formGroup]="paymentForm" (submit)="sendShippingAddress()" class="md:flex-1 x:w-[90%] mx-auto">
+        
+
+        <div> <!--Shipping container-->
+            <p class="font-medium border-b-2 border-cyan-300 mb-2 dark:text-white md:text-2xl">Shipping information</p>
+            <input formControlName="fullName" maxlength="40" [ngClass]="validateField('fullName')" type="text" class="dark:text-white mb-1 px-2 py-1 border-2 dark:bg-black border-black rounded-lg w-full" placeholder="Full name">
+            <div class="grid grid-cols-2 justify-center gap-2 w-full mb-1">
+                <input formControlName="phone" maxlength="10" [ngClass]="validateField('phone')" type="text" class="px-2 dark:text-white py-1 border-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none dark:bg-black border-black rounded-lg flex-1" placeholder="Phone">
+
+                <input formControlName="postalCode" maxlength="10" [ngClass]="validateField('postalCode')" type="text" class="px-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none dark:text-white  py-1 border-2 dark:bg-black border-black rounded-lg flex-1" placeholder="Postal code">
+            </div>
+
+            <input formControlName="residence" maxlength="60" [ngClass]="validateField('residence')" class="px-2 dark:text-white py-1 border-2 border-black dark:bg-black rounded-lg w-full mb-1" type="text" placeholder="Address">
+            <div class="grid grid-cols-2 justify-center gap-2 w-full mb-1">
+                <input formControlName="country" maxlength="15" [ngClass]="validateField('country')" class="px-2 dark:text-white py-1 border-2 border-black dark:bg-black rounded-lg flex-1" type="text" placeholder="Country">
+                <input formControlName="city" maxlength="25" [ngClass]="validateField('city')" class="px-2 py-1 dark:text-white border-2 border-black dark:bg-black rounded-lg flex-1" type="text" placeholder="City">
+            </div>
+        </div>
+
+        <div>
+            <p *ngIf="addresses.length>0" class="dark:text-white">Or select an existing address:</p>
+            @for (address of addresses; track $index) {
+            <div #container class="flex items-center">
+                <div [ngClass]="{'pointer-events-none':selectedAddress}"  #reference class=" mr-1 cursor-pointer w-max px-2 rounded-lg mb-2 border-2 border-gray-400" (click)="onSelectedAddress(address.id, reference, container)">
+                    <p [ngClass]="{'text-black':this.selectedAddress && theme==='dark'}" class="text-sm font-bold dark:text-white">Residence: <span class="font-normal">{{address.residence}}</span></p>
+                    <p [ngClass]="{'text-black':this.selectedAddress && theme==='dark'}" class="text-sm font-bold dark:text-white">Full name: <span class="font-normal">{{address.fullName}}</span></p>
+                </div>
+            </div>
+            }
+        </div>
+        <p *ngIf="paymentForm.valid || selectedAddress" class="italic text-cyan-400 font-bold text-lg">Pay with</p>
+        <ngx-paypal *ngIf="paymentForm.valid || selectedAddress" #paypalButton [config]="payPalConfig"></ngx-paypal>
+        
+
+    </form>
+
+
+</div>
+
+<app-payment-done *ngIf="paymentDone"></app-payment-done>
+

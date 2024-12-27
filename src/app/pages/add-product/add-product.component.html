@@ -1,0 +1,134 @@
+<h1 class="mt-28 text-center font-semibold text-3xl mb-7 md:mt-36 dark:text-white">Sell a product</h1>
+
+<form [formGroup]="formulario" (submit)="onSubmit()">
+
+    <div class="flex flex-col w-[80%] m-auto mb-10 lg:flex-row lg:justify-evenly lg:w-full">
+
+
+        <div (drop)="onDropImages($event)"  (dragover)="onDragOverImages($event)" (dragleave)="onDragLeaveImages($event)" class="relative flex flex-col justify-center items-center border border-black dark:border-cyan-300 border-dashed h-40 p-2 x:h-56 lg:w-72 flex-wrap">
+            
+
+            <div class="flex flex-col items-center">
+                <p *ngIf="files.length===0" class="font-bold dark:text-cyan-300"><i class="fa-solid fa-upload mr-2"></i>Drag and drop images</p>
+                <p *ngIf="files.length===0" class="text-gray-500 font-medium">or</p>
+            </div>
+            <div class="flex flex-wrap justify-center items-center overflow-auto">
+            @for (file of files; track file; let i=$index) {
+
+                <div class="relative lg:mb-10">
+                    <img #img class="w-24 h-24 object-cover p-1" [src]="setValueToSrc(img, file)" alt="image_preview">
+                    <i (click)="removeImage(i)" class="fa-solid fa-xmark hover:bg-red-500 cursor-pointer absolute top-8 left-8 bg-cyan-300 px-2 rounded-xl text-2xl opacity-60"></i>
+                </div>
+            } 
+            </div>
+
+            <input multiple id="input-label" accept="image/*" (change)="OnSelectedImages($event)" type="file" class="hidden">
+            
+            <label for="input-label" class="absolute bottom-2 cursor-pointer border border-black bg-cyan-300 font-medium px-2 py-1 rounded-sm mt-2">Select product images</label>
+        </div>
+        
+
+        <div class="flex flex-col">
+            <div>
+                <input maxlength="160" (input)="checkLength('title')" formControlName="title" [class]="validateField('title')" class="w-full p-2 bg-gray-200 border dark:text-white dark:bg-black dark:border-cyan-300 border-black mt-2 outline-none rounded-md" type="text" placeholder="Title">
+                <p  class="text-xs font-bold dark:text-gray-400"> {{titleLength}} / 160</p>
+            </div>
+            
+            <textarea id="product-description-textarea" maxlength="2000" (input)="checkLength('description')" formControlName="description" [class]="validateField('description')" class="p-2  dark:bg-black dark:text-white dark:border-cyan-300 bg-gray-200 border h-32 border-black mt-2 outline-none rounded-md resize-none" type="text" placeholder="Description"></textarea>
+            <p  class="text-xs font-bold dark:text-gray-400"> {{descriptionLength}} / 2000</p>
+
+            <div formGroupName="coupon" class="mt-3">
+                <p class="dark:text-white text-xs font-medium italic">Add discount coupon (optional)</p>
+                <div>
+                    <label for="is50Discount" [class]="(discount50?'text-cyan-300':'text-gray-500')" (click)="(discount50 = !discount50)" class="cursor-pointer w-max text-sm font-bold select-none">Buy 2, one has 50% discount</label>
+                    <input id="is50Discount" formControlName="is50Discount" hidden>
+                </div>
+                <div>
+                    <label for="isShippingFree" [class]="(freeShipping?'text-cyan-300':'text-gray-500')" (click)="onSelectedFreeShipping()" class="cursor-pointer w-max text-sm font-bold select-none">Free shipping</label>
+                    <input id="isShippingFree" formControlName="isShippingFree" hidden>
+                </div>
+                <div class="flex flex-col">
+                    <p [class]="(discount?'text-cyan-300':'text-gray-500')" (click)="onSelectedDiscount()" class="cursor-pointer w-max text-sm font-bold select-none">Customize discount</p>
+                    <div *ngIf="discount" class="justify-start flex mb-2">
+
+                        <input [ngClass]="
+                        {'border-red-600 dark:border-red-600':getName?.touched && (getName?.hasError('invalidDiscountName') || !getName?.valid), 
+                         'border-black dark:border-cyan-300':!getName?.hasError('invalidDiscountName') || getName?.valid }" 
+                        formControlName="name" 
+                         type="text" class="p-1 dark:bg-black [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none dark:text-white dark:border-cyan-300 bg-gray-200 border text-sm w-28 border-black mt-2 outline-none rounded-md mr-1" placeholder="Code name">
+                        <div> 
+                            <input [ngClass]="
+                            {'border-red-600 dark:border-red-600':getDiscount?.touched && getDiscount?.hasError('invalidDiscountValue') || getDiscount?.value > 100, 
+                             'border-black dark:border-cyan-300':!getDiscount?.hasError('invalidDiscountValue') || getDiscount?.valid }" formControlName="discount" 
+                             class="p-1 w-28 dark:bg-black [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none dark:text-white dark:border-cyan-300 bg-gray-200 border text-sm border-black mt-2 outline-none rounded-md" type="number" placeholder="Discount value">
+                            <span class="font-bold text-xl ml-1 dark:text-cyan-300">%</span>
+                        </div>
+
+                    </div>
+                    
+                </div>
+            </div>
+            
+        
+            <div class="flex justify-evenly mt-1 x:justify-evenly">
+
+                
+                <input formControlName="price" [class]="validateField('price')" class="p-2 dark:bg-black [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none dark:text-white dark:border-cyan-300 bg-gray-200 border w-24 border-black mt-2 outline-none rounded-md" type="number" placeholder="Price">
+                
+
+                <select formControlName="categoryId" [class]="validateField('categoryId')" class="px-2 dark:text-white dark:bg-black dark:border-cyan-300 border border-black rounded-sm text-sm outline-none font-medium md:text-lg md:w-60">
+                    <option value="">Select category</option>
+                    <option value="1">Watches</option>
+                    <option value="2">Clothes</option>
+                    <option value="3">Shoes</option>
+                    <option value="4">Pet Toys</option>
+                    <option value="5">Phones & Tablets</option>
+                    <option value="6">TV & Home</option>
+                    <option value="7">Audio & Sound</option>
+                </select>
+            </div>
+        
+            <div class="flex flex-wrap justify-evenly mt-2 x:flex-row-reverse x:mt-4 x:justify-evenly">
+
+            
+                <input formControlName="quantity" [class]="validateField('quantity')" class="p-2 dark:text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none dark:bg-black dark:border-cyan-300 bg-gray-200 border border-black mt-2 outline-none rounded-md w-24 lg:ml-4" type="number" placeholder="Quantity">
+                
+                    
+                <input formControlName="shippingPrice" (input)="verifyShippingPrice()" [class]="validateField('shippingPrice')" class="dark:bg-black w-32 dark:text-white dark:border-cyan-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none x:block p-2 bg-gray-200 border x:w-32 border-black mt-2 outline-none rounded-md lg:ml-4" type="number" placeholder="Shipping price">
+        
+                <select formControlName="conditionId" [class]="validateField('conditionId')" class="w-full mt-2 py-2 px-1 border dark:bg-black dark:border-cyan-300 dark:text-white border-black rounded-sm text-sm outline-none font-medium md:text-lg md:w-60 lg:w-40">
+                    <option value="">Condition</option>
+                    <option value="1">Used</option>
+                    <option value="2">Refurbished</option>
+                    <option value="3">New</option>
+                </select>
+        
+            </div>
+        
+        </div>
+
+        <div class="w-[282px] flex flex-col items-center justify-center">
+            <div class="flex flex-col justify-center mt-4">
+
+                <p *ngIf="(getQuantity?.touched && getQuantity?.value > 10000)" class=" text-red-600 font-medium mb-1"><i class="fa-solid fa-triangle-exclamation text-base text-red-600 font-bold mr-1"></i>Max quantity must be less than 10.000</p>
+
+                <p *ngIf="(getShippingPrice?.touched && getShippingPrice?.value > 10000)" class=" text-red-600 font-medium mb-1"><i class="fa-solid fa-triangle-exclamation text-red-600 font-bold mr-1"></i>Shipping must be less than 10.000</p>
+
+                <p *ngIf="(getPrice?.touched && getPrice?.value > 50000)" class=" text-red-600 font-medium mb-1"><i class="fa-solid fa-triangle-exclamation text-red-600 font-bold mr-1"></i>Price must be less than 50.000</p>
+
+                <p *ngIf="(getName?.touched && !getName?.valid && discount)" class=" text-red-600 font-medium mb-1"><i class="fa-solid fa-triangle-exclamation text-red-600 font-bold mr-1"></i>Code name must have 7 characters</p>
+
+                <p *ngIf="(getDiscount?.value > 100 && discount)" class=" text-red-600 font-medium mb-1"><i class="fa-solid fa-triangle-exclamation text-red-600 font-bold mr-1"></i>Discount percentage cannot be higher than 100</p>
+            </div>
+            <button [ngClass]="{'pointer-events-none bg-gray-400 dark:bg-gray-400':isVisible}" class="mt-2 bg-cyan-300 dark:bg-cyan-500 px-4 border-2 border-black rounded-lg font-bold py-1" type="submit">Add product<i *ngIf="isVisible" class="fa-solid fa-spinner ml-1 animate-spin"></i></button>
+            
+        </div>
+
+
+    </div>
+
+
+</form>
+
+
+

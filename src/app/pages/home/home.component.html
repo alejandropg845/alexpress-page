@@ -1,0 +1,114 @@
+<div class="flex flex-col mt-24 p-2 mb-10 md:mt-32 lg:flex-row lg:justify-center lg:gap-4">
+    <!--First home column-->
+    <div class="bg-gray-200 dark:bg-black dark:border-2 dark:border-sky-400 p-2 flex flex-col items-center rounded-2xl lg:mt-10">
+
+        <div class="mt-4 lg:p-4">
+
+            <h3 class="font-bold text-2xl lg:text-4xl dark:text-white">Products just for <span class="text-red-600">3,99$ USD</span></h3>
+            <p class="font-semibold mb-4 lg:text-xl dark:text-white">Free shipping</p>
+
+        </div>
+
+
+        <div *ngIf="lessFourProducts.length>0" class="x:flex x:gap-2">
+            <div>
+                <a *ngIf="(lessFourProducts[0] && lessFourProducts[0].id !== undefined || null)" [routerLink]="['/alexpress/product', lessFourProducts[0].id || 0]"><img class="w-60 h-48 md:w-72 md:h-60 object-cover rounded-xl lg:w-80 lg:h-72" [src]="lessFourProducts[0].images[0]" alt="image"></a>
+                <p *ngIf="(lessFourProducts[0] && lessFourProducts[0].id !== undefined || null)" class="text-red-600 font-bold text-xl pr-4"><span class="p-1">USD</span>{{lessFourProducts[0].price}}$</p>
+            </div>
+            <div  class="lg:hidden">
+                <a *ngIf="(lessFourProducts[1] && lessFourProducts[1].id !== undefined || null)" [routerLink]="['/alexpress/product', lessFourProducts[1].id || 0]"><img class="w-60 h-48 md:w-72 md:h-60 object-cover rounded-xl" [src]="lessFourProducts[1].images[0]" alt="image"></a>
+                <p *ngIf="(lessFourProducts[1] && lessFourProducts[1].id !== undefined || null)" class="text-red-600 font-bold text-xl pr-4"><span class="p-1">USD</span>{{lessFourProducts[1].price}}$</p>
+                <img *ngIf="(!lessFourProducts[1] || lessFourProducts[1].id === undefined || null)" class="w-80 h-80 object-cover rounded-xl lg:w-96 lg:h-96" src="/alexpress-page/assets/images/noproduct.webp" alt="image">
+            </div>
+            
+        </div>
+
+        <div *ngIf="(lessFourProducts && lessFourProducts.length > 2)" class="flex justify-evenly items-center gap-2 bg-gray-300 rounded-lg p-2 md:p-6 md:mt-4">
+
+            @for (less of lessFourProducts; track less; let i=$index) {
+
+                @if (i > 1) {
+                <div>
+                    <a [routerLink]="['/alexpress/product',less.id]"><img class="max-w-32 max-h-32 md:max-w-72 md:max-h-72 object-cover rounded-xl lg:w-48 lg:h-48" [src]="less.images[0]" alt="image"></a>
+                    <p class="text-red-600 font-bold text-xl pr-4"><span class="p-1">USD</span>{{less.price}}$</p>
+                </div>
+                
+                }
+                
+            }
+
+        </div>
+
+    </div>
+
+    <!--Second home column-->
+    <div class="px-4 bg-gradient-to-b from-cyan-200 to-sky-400 rounded-3xl mt-6">
+
+    
+        <h3 class="text-4xl mt-6 font-bold lg:text-5xl ">New</h3>
+        <p class="font-bold text-lg text-red-600 mb-4">Released this month</p>
+    
+
+        <div class="flex flex-wrap justify-center gap-2">
+
+            @for (released of newProducts; track released) {
+            <div class="">
+                <a [routerLink]="['/alexpress/product',released.id]"><img class="w-32 h-32 md:w-40 md:h-40 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] rounded-lg object-cover" [src]="released.images[0]" alt="image"></a>
+                <p class="text-black font-bold text-xl pr-4"><span class="p-1">USD</span>{{released.price}}$</p>
+            </div>
+            }
+            
+        </div>
+
+        <div>
+            <div class="bg-gray-100 p-4 dark:bg-black mt-4 rounded-xl">
+                <h3 class="text-3xl font-bold dark:text-white">You may like</h3>
+                <p class="font-bold text-red-600 mb-4">Offers for you</p>
+                <div *ngIf="allProducts.length" class="flex justify-evenly gap-4">
+
+                    @for (product of allProducts; track product; let i=$index) {
+                        @if (i < 2) {
+                        <div>
+                            <a [routerLink]="['/alexpress/product', product.id]"><img class="w-32 h-32 rounded-lg object-cover md:w-48 md:h-48 lg:h-40" [src]="product.images[0]" alt="image"></a>
+                            <p class="text-red-600 font-bold text-xl pr-4"><span class="p-1">USD</span>{{product.price}}$</p>
+                        </div>
+                        }
+                    }
+
+                    <div *ngIf="allProducts[6]" class="hidden x:block">
+                        <a [routerLink]="['/alexpress/product', allProducts[6].id]"><img class="w-32 h-32 rounded-lg object-cover md:w-48 md:h-48 lg:h-40" [src]="allProducts[6].images[0]" alt="image"></a>
+                        <p class="text-red-600 font-bold text-xl pr-4"><span class="p-1">USD</span>{{allProducts[6].price}}$</p>
+                    </div>
+
+                </div>
+            </div>
+            <div class="mb-6">
+                <h3 class="font-bold text-4xl text-red-600 mt-6">Few units</h3>
+                <p class="font-bold text-xl mb-2 dark:text-white">Don't miss them</p>
+                <div *ngIf="fewUnits.length" class="flex justify-evenly gap-2 lg:justify-evenly">
+                    @for (few of fewUnits; track few; let i=$index) {
+
+                        @if (i < 3) {
+                        <div class="">
+                            <a [routerLink]="['/alexpress/product', few.id]"><img  class="w-24 rounded-xl h-24 x:w-40 x:h-32 object-cover lg:w-32 lg:h-32" [src]="few.images[0]" alt="image"></a>
+                            <p class="text-white font-bold text-sm md:text-xl pr-4"><span class="p-1">USD</span>{{few.price}}$</p>
+                        </div>
+                        }
+                    }
+
+                    <div *ngIf="fewUnits[3] && fewUnits[3].id !==undefined" class="lg:block hidden">
+                        
+                        <a [routerLink]="['/alexpress/product', fewUnits[3].id]"><img class="w-24 rounded-xl h-24 object-cover  lg:w-32 lg:h-32" [src]="fewUnits[3].images[0]" alt="image"></a>
+                        <p class="text-white font-bold text-sm md:text-xl pr-4"><span class="p-1">USD</span>{{fewUnits[3].price}}$</p>
+                         
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-categories-slider></app-categories-slider>
+
+<app-products></app-products>
+

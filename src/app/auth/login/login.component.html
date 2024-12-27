@@ -1,0 +1,31 @@
+
+<div class="flex flex-col justify-center items-center gap-2">
+    <img src="/alexpress-page/assets/templates/logos/dark-mode-logo.png" class="w-28 h-28 mt-10 m-auto md:mt-0 lg:mt-5"  alt="logo">
+    <p routerLink="/alexpress/home" class="font-bold bg-cyan-300 border-2 border-cyan-400 w-max text-black rounded-xl px-2 text-center cursor-pointer hover:shadow-inner hover:shadow-black transition ease-in-out duration-300">Click here to go ahead with no account</p>
+    <p (click)="randomizedAccount()" class="font-bold bg-white border-2 border-gray-400 w-max text-black rounded-xl px-2 text-center cursor-pointer hover:shadow-inner hover:shadow-black transition ease-in-out duration-300">Random account (email features not available)</p>
+</div>
+
+<div class="flex justify-evenly mx-6 md:mx-auto max-w-[720px] rounded-2xl bg-gray-100 dark:bg-gray-950 mt-6 py-10 md:py-5 shadow-[0px_6px_7px_3px_#00000024]">
+
+    <div>
+        <h1 class="text-3xl text-black font-bold dark:text-white">Login</h1>
+        <p class="text-gray-400 mb-4 x:text-xl lg:mt-2">Type your credentials to log in</p>
+        <form [formGroup]="form" (submit)="logIn()" class="flex flex-col items-center">
+            <input formControlName="email" [class]="validateField('email')" class="border-2 p-2 font-semibold mb-2 w-64 x:w-80 rounded-xl outline-none dark:bg-gray-600 dark:text-white" type="email" placeholder="Email">
+            <div class="relative">
+                <input [type]="!isVisible ? 'password':'text'" formControlName="password" [class]="validateField('password')" class="border-2 font-semibold
+                dark:bg-gray-600 dark:text-white p-2 w-64 x:w-80 rounded-xl" type="password" placeholder="Password">
+                <i (click)="showPass()" [class]="(!isVisible ? 'fa-eye-slash' : 'fa-eye')" class="cursor-pointer fa-regular fa-eye absolute bottom-3 right-3 dark:text-white"></i>
+            </div>
+
+            <button type="submit" [ngClass]="{'pointer-events-none':isLoading}" class="inline-block bg-cyan-300 w-[40%] py-1 px-4 mt-5 font-semibold rounded-2xl x:w-[80%] lg:w-full lg:text-xl hover:shadow-inner hover:shadow-black transition ease-in-out duration-300">Done <i *ngIf="isLoading" class="fa fa-spinner animate-spin"></i></button>
+        </form>
+
+        <p class="font-medium mt-4 text-center x:mt-7 dark:text-white">Not a member? <a routerLink="/auth/register" class="underline decoration-2">Register here</a></p>
+    </div>
+
+    <div class="hidden md:block">
+        <img src="/alexpress-page/assets/images/small-shopping-cart-blue-space-space-text_185193-1490.jpg" class="w-64 h-72 object-cover rounded-2xl" alt="image">
+    </div>
+
+</div>
