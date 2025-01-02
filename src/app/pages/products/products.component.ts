@@ -3,9 +3,10 @@ import { ProductsService } from '../../services/products.service';
 import { Product } from '../../interfaces/product.interface';
 import { AuthService } from '../../services/auth.service';
 import { TokenInfo } from '../../interfaces/tokenInfo.interface';
-import { Subject, takeUntil } from 'rxjs';
+import { finalize, Subject, takeUntil } from 'rxjs';
 import { LocationStrategy } from '@angular/common';
 import { Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-products',
@@ -126,9 +127,11 @@ export class ProductsComponent implements OnInit, OnDestroy{
   constructor(private productsService:ProductsService, 
               private authService:AuthService,
               public locationStrategy:LocationStrategy,
-              private router:Router){}
+              private router:Router,
+              private spinnerService:NgxSpinnerService){}
 
   ngOnInit(): void {
+    this.spinnerService.show();
     const productsHome = "/alexpress/home";
     const products = "/alexpress/products";
     const product = "/alexpress/product/";
@@ -138,7 +141,7 @@ export class ProductsComponent implements OnInit, OnDestroy{
     || this.router.url.includes(product)
     || this.locationStrategy.path().includes(wishlist)){
       this.productsService.loadProducts()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroy$), finalize(() => this.spinnerService.hide()))
       .subscribe(products => {
       this.products = products;
       });

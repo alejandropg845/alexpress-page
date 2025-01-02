@@ -2,7 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ProductsService } from '../../services/products.service';
 import { Product } from '../../interfaces/product.interface';
 import { AuthService } from '../../services/auth.service';
-import { Subscription } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-home',
@@ -19,8 +20,9 @@ export class HomeComponent implements OnInit, OnDestroy{
   fewUnits          :Product[] = [];
 
   loadProductsFromService(){
+    this.spinnerService.show();
     this.dataSubscription$ = this.productsService.loadProducts()
-    .subscribe(products => {
+    .pipe(finalize(() => this.spinnerService.hide())).subscribe(products => {
       this.allProducts = products;
       this.fewUnits = products.filter(p => p.quantity < 10);
       this.lessFourProducts = products.filter(p => p.price <= 3.99).splice(0,4);
@@ -28,7 +30,7 @@ export class HomeComponent implements OnInit, OnDestroy{
     });
   };
 
-  constructor(private productsService:ProductsService, private authService:AuthService){}
+  constructor(private productsService:ProductsService, private spinnerService:NgxSpinnerService){}
 
   ngOnInit(): void {
     this.loadProductsFromService();

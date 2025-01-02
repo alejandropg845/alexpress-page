@@ -2,10 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Product } from '../../interfaces/product.interface';
 import { ProductsService } from '../../services/products.service';
-import { Subject, switchMap, takeUntil } from 'rxjs';
+import { finalize, Subject, switchMap, takeUntil } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { handleBackendErrorResponse } from '../../../error-handler';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 
 
@@ -142,12 +143,13 @@ export class ProductComponent implements OnInit, OnDestroy{
   constructor(private activatedRoute:ActivatedRoute, 
               private productsService:ProductsService, 
               private authService:AuthService,
-              private toastr:ToastrService){}
+              private toastr:ToastrService,
+              private spinnerService:NgxSpinnerService){}
 
   ngOnInit(): void {
-
+    this.spinnerService.show();
     this.activatedRoute.params.pipe(switchMap(({id}) => this.productsService.loadProductById(id)))
-    .pipe(takeUntil(this.destroy$))
+    .pipe(takeUntil(this.destroy$), finalize(() => this.spinnerService.hide()))
     .subscribe({
       next: product => {
         this.product = product;
